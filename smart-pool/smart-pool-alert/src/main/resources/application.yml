@@ -1,0 +1,5 @@
+
+# Spring邮件配置
+spring:
+  application:
+    name: smart-pool-alert

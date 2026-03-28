@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiao.smartpooladminserver.mapper.PoolAlertLogMapper">
+    <resultMap id="PoolAlertLogResultMap" type="com.xiao.smartpoolcore.model.entity.PoolAlertLog">
+        <id column="id" property="id" />
+        <result column="app_name" property="appName" />
+        <result column="pool_name" property="poolName" />
+        <result column="alert_type" property="alertType" />
+        <result column="alert_level" property="alertLevel" />
+        <result column="content" property="content" />
+        <result column="status" property="status" />
+        <result column="handler" property="handler" />
+        <result column="handle_time" property="handleTime" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <sql id="BASE_DATA">
+        id, app_name, pool_name, alert_type, alert_level, content, status, handler, handle_time, create_time
+    </sql>
+
+    <insert id="save" parameterType="com.xiao.smartpoolcore.model.entity.PoolAlertLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pool_alert_log (
+            app_name,
+            pool_name,
+            alert_type,
+            alert_level,
+            content,
+            status,
+            create_time
+        ) VALUES (
+            #{appName},
+            #{poolName},
+            #{alertType},
+            #{alertLevel},
+            #{content},
+            #{status},
+            #{createTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.xiao.smartpoolcore.model.entity.PoolAlertLog">
+        UPDATE pool_alert_log
+        SET handler = #{handler},
+            handle_time = #{handleTime},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectAlertsList" resultMap="PoolAlertLogResultMap" parameterType="com.xiao.smartpooladminserver.model.dto.PoolAlertLogQueryDTO">
+        SELECT <include refid="BASE_DATA"/>
+        FROM pool_alert_log
+        <where>
+            <if test="appName != null and appName != ''">
+                AND app_name = #{appName}
+            </if>
+            <if test="poolName != null and poolName != ''">
+                AND pool_name LIKE CONCAT('%', #{poolName}, '%')
+            </if>
+            <if test="alertType != null and alertType != ''">
+                AND alert_type = #{alertType}
+            </if>
+            <if test="alertLevel != null and alertLevel != ''">
+                AND alert_level = #{alertLevel}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

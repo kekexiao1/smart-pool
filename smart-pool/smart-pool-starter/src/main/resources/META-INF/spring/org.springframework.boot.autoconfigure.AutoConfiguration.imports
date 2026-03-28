@@ -1,0 +1,4 @@
+com.xiao.smartpoolstarter.SmartPoolAutoConfiguration
+com.xiao.smartpoolcore.core.CoreAutoConfiguration
+com.xiao.smartpoolmetrics.MetricsAutoConfiguration
+com.xiao.smartpoolalert.AlertAutoConfiguration

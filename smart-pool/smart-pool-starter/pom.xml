@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.xiao</groupId>
+        <artifactId>DynamicThreadPool</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <packaging>jar</packaging>
+    <groupId>com.xiao</groupId>
+    <artifactId>smart-pool-starter</artifactId>
+    <version>0.0.1</version>
+
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    <dependencies>
+        <!-- 动态线程池核心模块 -->
+        <dependency>
+            <groupId>com.xiao</groupId>
+            <artifactId>smart-pool-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- 动态线程池告警模块 -->
+        <dependency>
+            <groupId>com.xiao</groupId>
+            <artifactId>smart-pool-alert</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- 动态线程池指标模块 -->
+        <dependency>
+            <groupId>com.xiao</groupId>
+            <artifactId>smart-pool-metrics</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <!-- Spring Boot Starter -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

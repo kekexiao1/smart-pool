@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiao.smartpooladminserver.mapper.PoolLogMapper">
+    <resultMap id="PoolConfigLogResultMap" type="com.xiao.smartpoolcore.model.entity.PoolConfigLog">
+        <id column="id" property="id" />
+        <result column="app_name" property="appName" />
+        <result column="pool_name" property="poolName" />
+        <result column="old_config" property="oldConfig" />
+        <result column="new_config" property="newConfig" />
+        <result column="change_type" property="changeType" />
+        <result column="operator" property="operator" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <sql id="BASE_DATA">
+        id, app_name, pool_name, old_config, new_config, change_type, operator, create_time
+    </sql>
+
+    <insert id="save" parameterType="com.xiao.smartpoolcore.model.entity.PoolConfigLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pool_config_log (
+            app_name,
+            pool_name,
+            old_config,
+            new_config,
+            change_type,
+            operator,
+            create_time
+        ) VALUES (
+            #{appName},
+            #{poolName},
+            #{oldConfig},
+            #{newConfig},
+            #{changeType},
+            #{operator},
+            #{createTime}
+        )
+    </insert>
+
+    <select id="selectLogsList" resultMap="PoolConfigLogResultMap" parameterType="com.xiao.smartpooladminserver.model.dto.PoolConfigLogQueryDTO">
+        SELECT <include refid="BASE_DATA"/>
+        FROM pool_config_log
+        <where>
+            <if test="appName != null and appName != ''">
+                AND app_name = #{appName}
+            </if>
+            <if test="poolName != null and poolName != ''">
+                AND pool_name LIKE CONCAT('%', #{poolName}, '%')
+            </if>
+            <if test="changeType != null and changeType != ''">
+                AND change_type = #{changeType}
+            </if>
+            <if test="operator != null and operator != ''">
+                AND operator LIKE CONCAT('%', #{operator}, '%')
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+</mapper>

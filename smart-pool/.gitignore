@@ -1,0 +1,21 @@
+# 全局忽略
+.DS_Store
+*.log
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# 后端忽略（Java/SpringBoot）
+target/
+*.iml
+.idea/
+mvnw/
+
+# 后端忽略（Node）
+node_modules/
+
+# 前端忽略
+node_modules/
+dist/
