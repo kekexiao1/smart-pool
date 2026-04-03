@@ -39,6 +39,8 @@ public class ThreadPoolConfig{
 	public String getRejectedHandlerClass() {
 		return rejectedHandlerClass;
 	}
+
+
 	// 线程池名字
 	private String threadPoolName;
 	// 核心线程数

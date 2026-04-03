@@ -1,13 +1,27 @@
 
+server:
+  port: 8081
+  servlet:
+    context-path: /admin
+
 smart-pool:
   enabled: true
 
 spring:
   application:
     name: smart-pool-admin-server
+  output:
+    ansi:
+      enabled: always
   config:
     import: optional:nacos:thread-pool-config.yaml?group=DEFAULT_GROUP&refreshEnabled=true&encoding=UTF-8
-  
+
+  data:
+    redis:
+      password: 123456
+      host: localhost
+      port: 6379
+      database: 7
   # 数据库配置
   datasource:
     url: jdbc:mysql://localhost:3306/smart_pool?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
@@ -44,55 +58,36 @@ spring:
             enable: true
             required: true
 
-  output:
-    ansi:
-      enabled: always
 
-    
-    # 支付处理线程池
-#    payment-pool:
-#      rules:
-#        - type: CAPACITY
-#          threshold: 85
-#          count: 3
-#          period: 60
-#          silencePeriod: 180
-#          enabled: true
-#        - type: LIVENESS
-#          threshold: 80
-#          count: 2
-#          period: 60
-#          silencePeriod: 180
-#          enabled: true
-#        - type: RUN_TIMEOUT
-#          threshold: 8
-#          count: 1
-#          silencePeriod: 180
-#          enabled: true
-#        - type: REJECT
-#          period: 60
-#          silencePeriod: 300
-#          enabled: true
-#      monitor-interval: 5000
+rocketmq:
+  # NameServer 地址
+  name-server: 127.0.0.1:9876
 
-server:
-  port: 8081
-  servlet:
-    context-path: /admin
+  producer:
+    group: reject-producer-group
+    send-message-timeout: 3000
+    retry-times-when-send-failed: 2
+    max-message-size: 4194304    # 最大消息体大小(byte)，默认4MB
+  consumer:
+    group: reject-consumer-group
+    consume-thread-min: 20       # 最小消费线程数，默认20
+    consume-thread-max: 64       # 最大消费线程数，默认64
+    consume-mode: CLUSTERING     # 消费模式：CLUSTERING(集群) / BROADCASTING(广播)
+
 
 logging:
   level:
     com.xiao.smartpooladminserver: INFO
 
-# Actuator监控配置（核心：暴露Prometheus端点）
+# Actuator监控配置（暴露Prometheus端点）
 management:
   # 端点通用配置
   endpoints:
     web:
       exposure:
         include: prometheus,health,info,metrics # 暴露prometheus端点
-      base-path: /actuator # 端点基础路径（默认/actuator）
-    enabled-by-default: true # 默认开启所有端点
+      base-path: /actuator                      # 端点基础路径（默认/actuator）
+    enabled-by-default: true                    # 默认开启所有端点
   # 单个端点配置
   endpoint:
     prometheus:

@@ -3,7 +3,7 @@ package com.xiao.smartpoolcore.core.executor;
 import com.xiao.smartpoolcore.common.util.ParseUtil;
 import com.xiao.smartpoolcore.config.DynamicCapacityBlockingQueue;
 import com.xiao.smartpoolcore.config.NamedThreadFactory;
-import com.xiao.smartpoolcore.core.manager.TaskExecutionCallbackManager;
+import com.xiao.smartpoolcore.core.task.MonitorablePoolTask;
 import com.xiao.smartpoolcore.model.dto.ThreadPoolConfig;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,11 +27,9 @@ public class DynamicThreadPoolExecutor{
 	private final AtomicBoolean runTimeout=new AtomicBoolean(false);
 	// 拒绝任务数
 	private final AtomicInteger rejectedCount = new AtomicInteger(0);
-	// 异常任务数
-	private final AtomicInteger exceptionCount = new AtomicInteger(0);
+
 	// 当前拒绝策略
 	private final AtomicReference<RejectedExecutionHandler> currentRejectPolicy=new AtomicReference<>();
-
 
 	public DynamicThreadPoolExecutor(ThreadPoolConfig config) {
 		this.config = config;
@@ -58,32 +56,21 @@ public class DynamicThreadPoolExecutor{
 
 	/**
 	 * 执行任务
-	 * @param task
+	 * @param task 实际任务
+	 * @param taskId 任务唯一标识
+	 * @param taskType 任务类型/业务码
+	 * @param payload 任务参数(JSON格式)
 	 */
-	public void execute(Runnable task) {
+	public void execute(Runnable task, String taskId, String taskType, String businessType,String payload) {
 		long submitTimeNanos = System.nanoTime();
-		
-		try {
-			executor.execute(() -> {
-				long startExecuteNanos = System.nanoTime();
-				long waitTimeNanos = startExecuteNanos - submitTimeNanos;
-				
-				// 记录等待时间
-				TaskExecutionCallbackManager.recordWaitTime(config.getThreadPoolName(), waitTimeNanos);
-				
-				try {
-					// 入队
-					task.run();
-				} catch (Exception e) {
-					exceptionCount.incrementAndGet();
-				} finally {
-					long endExecuteNanos = System.nanoTime();
-					long executeTimeNanos = endExecuteNanos - startExecuteNanos;
 
-					// 记录执行时间,用于prometheus指标检测
-					TaskExecutionCallbackManager.recordExecuteTime(config.getThreadPoolName(), executeTimeNanos);
-				}
-			});
+		// 创建可监控的任务，集成时间监控功能
+		MonitorablePoolTask monitorableTask = new MonitorablePoolTask(
+			task, taskId, taskType, businessType, payload, getThreadPoolName(), submitTimeNanos
+		);
+
+		try {
+			executor.execute(monitorableTask);
 		} catch (RejectedExecutionException e) {
 			// 只在AbortPolicy下才记录拒绝任务数
 			rejectedCount.incrementAndGet();
@@ -166,14 +153,6 @@ public class DynamicThreadPoolExecutor{
 	 */
 	public int getQueueSize() {
 		return executor.getQueue().size();
-	}
-
-	/**
-	 * 异常任务总数
-	 * @return
-	 */
-	public long getExceptionCount() {
-		return exceptionCount.get();
 	}
 
 	/**

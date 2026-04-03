@@ -23,7 +23,8 @@ public class ThreadPoolMetricCollector {
 	public Set<String> getAllPoolNames(){
 		return registry.getAllThreadPoolNames();
 	}
-	
+
+
 	public ThreadPoolMetrics currentMetrics(String poolName){
 		if(StringUtils.isEmpty(poolName)){
 			throw new RuntimeException("采集指标时，线程池名字不能为空");

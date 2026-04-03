@@ -20,4 +20,8 @@ public class NamedThreadFactory implements ThreadFactory {
 		thread.setPriority(Thread.NORM_PRIORITY);
 		return thread;
 	}
+
+	public String getThreadPoolName(){
+		return this.threadPoolName;
+	}
 }

@@ -149,13 +149,6 @@ public class ThreadPoolMonitor implements MeterBinder, ApplicationRunner {
 				.description(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getDesc())
 				.register(meterRegistry);
 
-//		// 执行异常总数
-//		FunctionCounter.builder(ThreadPoolIndicatorEnum.EXCEPTION_COUNT_TOTAL.getIndicatorName(),
-//						dynamicExecutor, DynamicThreadPoolExecutor::getExceptionCount)
-//				.tags(tags)
-//				.description(ThreadPoolIndicatorEnum.EXCEPTION_COUNT_TOTAL.getDesc())
-//				.register(meterRegistry);
-
 		// 完成任务总数
 		FunctionCounter.builder(ThreadPoolIndicatorEnum.COMPLETED_TASK_TOTAL.getIndicatorName(),
 						executor, ThreadPoolExecutor::getCompletedTaskCount)

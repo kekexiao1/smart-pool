@@ -8,7 +8,6 @@ import com.xiao.smartpoolalert.manager.AlertInitializer;
 import com.xiao.smartpoolalert.manager.AlertManager;
 import com.xiao.smartpoolalert.monitor.ThreadPoolMonitorScheduler;
 import com.xiao.smartpoolalert.monitor.engine.AlertEngine;
-import com.xiao.smartpoolalert.util.ApplicationContextHolder;
 import com.xiao.smartpoolcore.core.CoreAutoConfiguration;
 import com.xiao.smartpoolmetrics.MetricsAutoConfiguration;
 import com.xiao.smartpoolmetrics.metrics.ThreadPoolMetricCollector;
@@ -29,30 +28,27 @@ import org.springframework.context.annotation.Bean;
 @AutoConfigureAfter({CoreAutoConfiguration.class, MetricsAutoConfiguration.class})
 public class AlertAutoConfiguration {
 
-    @Bean
-    public ApplicationContextHolder applicationContextHolder() {
-        log.info("ApplicationContextHolder 配置完成");
-        return new ApplicationContextHolder();
-    }
+//    @Bean
+//    public ApplicationContextHolder applicationContextHolder() {
+//        log.info("ApplicationContextHolder 配置完成");
+//        return new ApplicationContextHolder();
+//    }
 
     @Bean
     @ConditionalOnMissingBean(PoolAlertLogService.class)
     public AlertManager alertManager() {
-        log.info("使用空实现的PoolAlertLogService");
         return new AlertManager(new NoPoolAlertLogServiceImpl());
     }
     
     @Bean
     @ConditionalOnBean(PoolAlertLogService.class)
     public AlertManager alertManagerWithRealService(PoolAlertLogService poolAlertLogService) {
-        log.info("使用真实的PoolAlertLogService实现");
         return new AlertManager(poolAlertLogService);
     }
 
     @Bean
     @ConditionalOnBean({ThreadPoolMetricCollector.class, AlertManager.class})
     public AlertEngine alertEngine(AlertManager alertManager, ThreadPoolMetricCollector metricCollector){
-        log.info("AlertEngine 配置完成");
         return new AlertEngine(alertManager, metricCollector);
     }
 
@@ -60,7 +56,6 @@ public class AlertAutoConfiguration {
     public AlertInitializer alertInitializer(AlertManager alertManager,
                                              AlertProperties alertProperties,
                                              ThreadPoolAlertConfig threadPoolAlertConfig) {
-        log.info("AlertInitializer 配置完成");
         return new AlertInitializer(alertManager, alertProperties, threadPoolAlertConfig);
     }
 

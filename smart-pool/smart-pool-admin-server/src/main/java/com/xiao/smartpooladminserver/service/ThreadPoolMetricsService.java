@@ -35,16 +35,19 @@ public class ThreadPoolMetricsService {
 			throw new IllegalArgumentException("线程池[" + poolName + "]不存在");
 		}
 
+
 		for (int i = 0; i < taskCount; i++) {
-			int taskId = i + 1;
-			executor.execute(() -> {
+			int taskId=i+1;
+			Runnable task=() -> {
 				try {
 					Thread.sleep(1000);
 					log.info("线程 [{}] 成功第{}次执行任务", poolName, taskId);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
-			});
+			};
+			String payload = String.format("{\"orderId\":\"order-%d\"}", taskId);
+			executor.execute(task, "taskId-"+taskId, "TEST_TASK", "ORDER", payload);
 		}
 	}
 
@@ -56,22 +59,22 @@ public class ThreadPoolMetricsService {
 
 		ThreadPoolConfig config = executor.getConfig();
 		int queueCapacity = config.getQueueCapacity();
-		queueCapacity=520;
 		int targetQueueSize = (int) (queueCapacity * 0.9);
 
 		log.info("开始测试ThreadPoolQueueFull告警 - 线程池: {}, 队列容量: {}, 目标队列大小: {}, 持续时间: {}秒",
 				poolName, queueCapacity, targetQueueSize, durationSeconds);
 
 		for (int i = 0; i < targetQueueSize; i++) {
-			int taskId = i + 1;
-			executor.execute(() -> {
+			int taskId=i+1;
+			Runnable task=() -> {
 				try {
-					Thread.sleep(durationSeconds * 1000L);
-					log.info("告警测试任务[{}]完成", taskId);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
-			});
+			};
+			String payload = String.format("{\"orderId\":\"order-%d\"}", taskId);
+			executor.execute(task, "taskId-"+taskId, "QUEUE_TEST", "ORDER", payload);
 		}
 
 		return String.format("ThreadPoolQueueFull告警测试已启动。线程池: %s, 当前队列大小: %d/%d (%.1f%%), 测试将持续: %d秒",
@@ -88,14 +91,15 @@ public class ThreadPoolMetricsService {
 		log.info("开始测试ThreadPoolRunTimeout告警 - 线程池: {}, 持续时间: {}秒",
 				poolName, durationSeconds);
 
-		executor.execute(() -> {
+		Runnable task=() -> {
 			try {
-				Thread.sleep(durationSeconds * 1000L);
-				log.info("执行超时告警测试任务完成，执行时间: {}秒", durationSeconds);
+				Thread.sleep(durationSeconds);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
-		});
+		};
+		String payload = String.format("{\"orderId\":\"order-1\",\"duration\":%d}", durationSeconds);
+		executor.execute(task, "taskId-1", "TIMEOUT_TEST", "ORDER", payload);
 
 		return String.format("ThreadPoolRunTimeout告警测试已启动。线程池: %s, 任务执行时间: %d秒, 超时阈值: 5秒",
 				poolName, durationSeconds);
@@ -105,7 +109,6 @@ public class ThreadPoolMetricsService {
 		ThreadPoolConfig config = executor.getConfig();
 
 		ThreadPoolAccumulateMetricsDTO accumulateMetrics = ThreadPoolAccumulateMetricsDTO.builder()
-				.exceptionCount(executor.getExceptionCount())
 				.rejectCount(executor.getRejectedCount())
 				.completedTaskCount(executor.getCompletedTaskCount())
 				.build();

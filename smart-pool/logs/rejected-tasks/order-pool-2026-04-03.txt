@@ -1,0 +1,126 @@
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:06:06
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 333653844
+任务ID: taskId-3
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-3
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:06:07
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 940019784
+任务ID: taskId-5
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-5
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:06:07
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 1008857189
+任务ID: taskId-7
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-7
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:06:07
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 306428514
+任务ID: taskId-8
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-8
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:29:05
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 328260812
+任务ID: taskId-3
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-3
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:29:06
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 136204577
+任务ID: taskId-5
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-5
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:29:06
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 2069874267
+任务ID: taskId-6
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-6
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:29:06
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 979949845
+任务ID: taskId-8
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-8
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+
+===== 拒绝任务记录 =====
+线程池: order-pool
+时间: 2026-04-03 11:29:07
+任务类型: com.xiao.smartpoolcore.core.task.MonitorablePoolTask
+任务哈希: 1406506764
+任务ID: taskId-9
+线程池名称: order-pool
+业务类型: ORDER
+业务ID: order-9
+重试次数: 0
+最大重试次数: 3
+延迟时间: 0
+=== 结束 ===
+

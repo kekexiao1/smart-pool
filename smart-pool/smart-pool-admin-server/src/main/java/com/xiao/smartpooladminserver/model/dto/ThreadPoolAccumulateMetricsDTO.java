@@ -13,6 +13,5 @@ import lombok.NoArgsConstructor;
 public class ThreadPoolAccumulateMetricsDTO {
 
 	private long rejectCount;        // 拒绝任务总数
-	private long exceptionCount;     // 执行异常总数
 	private long completedTaskCount; // 完成任务总数
 }

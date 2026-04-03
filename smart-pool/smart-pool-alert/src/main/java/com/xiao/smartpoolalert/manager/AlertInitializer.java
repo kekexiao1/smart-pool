@@ -7,7 +7,7 @@ import com.xiao.smartpoolalert.notification.DingTalkAlertNotifier;
 import com.xiao.smartpoolalert.notification.EmailAlertNotifier;
 import com.xiao.smartpoolalert.notification.WeChatAlertNotifier;
 import com.xiao.smartpoolalert.rule.AlertRule;
-import com.xiao.smartpoolalert.util.ApplicationContextHolder;
+import com.xiao.smartpoolcore.common.util.ApplicationContextHolder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
