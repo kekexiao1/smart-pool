@@ -58,6 +58,14 @@ spring:
             enable: true
             required: true
 
+  # jackson:
+  #   # 自动注册 JavaTimeModule（启用 JSR310 支持）
+  #   serialization:
+  #     write-dates-as-timestamps: false # 不输出时间戳（毫秒数），而是字符串
+  #   date-format: yyyy-MM-dd HH:mm:ss
+  #   time-zone: GMT+8
+
+
 
 rocketmq:
   # NameServer 地址

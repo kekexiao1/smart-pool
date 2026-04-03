@@ -12,6 +12,7 @@ target/
 *.iml
 .idea/
 mvnw/
+logs/
 
 # 后端忽略（Node）
 node_modules/

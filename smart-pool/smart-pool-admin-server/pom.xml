@@ -95,6 +95,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
+        <!-- 支持java8 LocalDateTime序列化 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

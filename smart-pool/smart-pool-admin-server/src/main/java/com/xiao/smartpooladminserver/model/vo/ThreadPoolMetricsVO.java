@@ -10,7 +10,7 @@ import lombok.Data;
 @Builder
 public class ThreadPoolMetricsVO {
 	/**
-	 * 线程池名称（唯一标识）
+	 * 线程池名称
 	 */
 	private String threadPoolName;
 

@@ -26,7 +26,7 @@ public class DynamicThreadPoolExecutor{
 	// 超时任务数
 	private final AtomicBoolean runTimeout=new AtomicBoolean(false);
 	// 拒绝任务数
-	private final AtomicInteger rejectedCount = new AtomicInteger(0);
+//	private final AtomicInteger rejectedCount = new AtomicInteger(0);
 
 	// 当前拒绝策略
 	private final AtomicReference<RejectedExecutionHandler> currentRejectPolicy=new AtomicReference<>();
@@ -72,9 +72,7 @@ public class DynamicThreadPoolExecutor{
 		try {
 			executor.execute(monitorableTask);
 		} catch (RejectedExecutionException e) {
-			// 只在AbortPolicy下才记录拒绝任务数
-			rejectedCount.incrementAndGet();
-			log.error("任务被拒绝! rejectedCount={}", rejectedCount.get());
+			throw new RuntimeException("AbortPolicy抛出异常");
 		}
 	}
 

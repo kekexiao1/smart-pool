@@ -7,7 +7,6 @@ import com.xiao.smartpooladminserver.model.dto.ThreadPoolConfigDTO;
 import com.xiao.smartpooladminserver.model.dto.ThreadPoolConfigTemplateDTO;
 import com.xiao.smartpooladminserver.service.ThreadPoolConfigService;
 import com.xiao.smartpooladminserver.model.vo.ThreadPoolConfigVO;
-import com.xiao.smartpoolcore.callback.PoolLogService;
 import com.xiao.smartpoolcore.common.constant.ThreadPoolConstant;
 import com.xiao.smartpoolcore.common.util.ParseUtil;
 import com.xiao.smartpoolcore.common.util.ValidateUtil;
