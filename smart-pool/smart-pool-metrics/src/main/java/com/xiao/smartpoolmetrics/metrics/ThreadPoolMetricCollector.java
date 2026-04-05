@@ -44,8 +44,6 @@ public class ThreadPoolMetricCollector {
 		if(handler instanceof CountingRejectedExecutionHandler){
 			CountingRejectedExecutionHandler countingHandler = (CountingRejectedExecutionHandler) handler;
 			rejectedCount = countingHandler.getRejectedCount();
-			// 重置
-//			countingHandler.setRejectedCount(0);
 		}
 
 		// 获取任务执行时间统计
@@ -61,8 +59,6 @@ public class ThreadPoolMetricCollector {
 				.queueSize(executor.getQueue().size())
 				.completedTaskCount(executor.getCompletedTaskCount())
 				.taskCount(executor.getTaskCount())
-				// TODO
-				.rejectedTask(rejectedCount>0 ? true:false)
 				.avgExecutionTime(avgExecutionTime)
 				.maxExecutionTime(maxExecutionTime)
 				.timestamp(new Date().getTime())

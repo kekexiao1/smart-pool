@@ -23,21 +23,14 @@ public class DynamicThreadPoolExecutor{
 	// 原生线程池类
 	private final ThreadPoolExecutor executor;
 
-	// 超时任务数
-	private final AtomicBoolean runTimeout=new AtomicBoolean(false);
-	// 拒绝任务数
-//	private final AtomicInteger rejectedCount = new AtomicInteger(0);
-
-	// 当前拒绝策略
-	private final AtomicReference<RejectedExecutionHandler> currentRejectPolicy=new AtomicReference<>();
-
 	public DynamicThreadPoolExecutor(ThreadPoolConfig config) {
 		this.config = config;
 
 		// 创建动态阻塞队列
-		BlockingQueue<Runnable> queue =  new DynamicCapacityBlockingQueue(config.getQueueCapacity());
+		DynamicCapacityBlockingQueue<Runnable> queue =  new DynamicCapacityBlockingQueue(config.getQueueCapacity());
 
 		RejectedExecutionHandler rejectedExecutionHandler = ParseUtil.parseRejectedHandler(config.getRejectedHandlerClass());
+
 
 		// 创建执行器
 		this.executor = new ThreadPoolExecutor(
@@ -84,11 +77,23 @@ public class DynamicThreadPoolExecutor{
 		return new ThreadPoolConfig(this.config);
 	}
 
+
+	/**
+	 * 返回Executor
+	 */
+	public ThreadPoolExecutor getExecutor(){
+		return this.executor;
+	}
+
 	/**
 	 *
 	 * @param newConfig
 	 */
 	public void setConfig(ThreadPoolConfig newConfig) {
+		if(config==null){
+			log.error("设置的config不能为空");
+			return;
+		}
 		this.config = newConfig;
 	}
 
@@ -96,21 +101,14 @@ public class DynamicThreadPoolExecutor{
 		return this.config.getThreadPoolName();
 	}
 
-	/**
-	 * 返回Executor
-	 * @return
-	 */
-	public ThreadPoolExecutor getExecutor(){
-		return this.executor;
-	}
 
-	/**
-	 * 返回当前拒绝策略
-	 * @return
-	 */
-	public AtomicReference getCurrentRejectPolicy(){
-		return this.currentRejectPolicy;
-	}
+//	/**
+//	 * 返回当前拒绝策略
+//	 * @return
+//	 */
+//	public AtomicReference getCurrentRejectPolicy(){
+//		return this.currentRejectPolicy;
+//	}
 
 
 	public boolean isShutDown() {
@@ -153,13 +151,13 @@ public class DynamicThreadPoolExecutor{
 		return executor.getQueue().size();
 	}
 
-	/**
-	 * 拒绝任务总数
-	 * @return
-	 */
-	public long getRejectedCount() {
-		return rejectedCount.get();
-	}
+//	/**
+//	 * 拒绝任务总数
+//	 * @return
+//	 */
+//	public long getRejectedCount() {
+//		return rejectedCount.get();
+//	}
 
 	/**
 	 * 完成任务总数

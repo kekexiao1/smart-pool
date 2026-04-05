@@ -1,5 +1,6 @@
 package com.xiao.smartpoolmetrics.monitor;
 
+import com.xiao.smartpoolcore.config.CountingRejectedExecutionHandler;
 import com.xiao.smartpoolcore.core.executor.DynamicThreadPoolExecutor;
 import com.xiao.smartpoolcore.core.manager.TaskExecutionCallbackManager;
 import com.xiao.smartpoolcore.core.registry.ThreadPoolRegistry;
@@ -15,6 +16,7 @@ import org.springframework.boot.ApplicationRunner;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @AllArgsConstructor
@@ -143,11 +145,15 @@ public class ThreadPoolMonitor implements MeterBinder, ApplicationRunner {
 				.register(meterRegistry);
 
 		// 拒绝任务总数
-		FunctionCounter.builder(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getIndicatorName(),
-						dynamicExecutor, DynamicThreadPoolExecutor::getRejectedCount)
-				.tags(tags)
-				.description(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getDesc())
-				.register(meterRegistry);
+		RejectedExecutionHandler handler = executor.getRejectedExecutionHandler();
+		if(handler instanceof CountingRejectedExecutionHandler){
+			CountingRejectedExecutionHandler handler1=(CountingRejectedExecutionHandler) handler;
+			FunctionCounter.builder(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getIndicatorName(),
+							handler1, CountingRejectedExecutionHandler::getRejectedCount)
+					.tags(tags)
+					.description(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getDesc())
+					.register(meterRegistry);
+		}
 
 		// 完成任务总数
 		FunctionCounter.builder(ThreadPoolIndicatorEnum.COMPLETED_TASK_TOTAL.getIndicatorName(),

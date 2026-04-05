@@ -2,6 +2,7 @@ package com.xiao.smartpooladminserver.service;
 
 import com.xiao.smartpooladminserver.model.dto.ThreadPoolAccumulateMetricsDTO;
 import com.xiao.smartpooladminserver.model.dto.ThreadPoolRealTimeMetricsDTO;
+import com.xiao.smartpoolcore.config.DynamicCapacityBlockingQueue;
 import com.xiao.smartpoolcore.core.executor.DynamicThreadPoolExecutor;
 import com.xiao.smartpoolcore.core.registry.ThreadPoolRegistry;
 import com.xiao.smartpoolcore.config.CountingRejectedExecutionHandler;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -91,9 +93,16 @@ public class ThreadPoolMetricsCollectorService {
             CountingRejectedExecutionHandler countingHandler = (CountingRejectedExecutionHandler) handler;
             rejectCount = countingHandler.getRejectedCount();
         }
-        
+
+        BlockingQueue<Runnable> queue = dynamicExecutor.getExecutor().getQueue();
+        long avgWaitTime=0;
+        if(queue instanceof DynamicCapacityBlockingQueue){
+            DynamicCapacityBlockingQueue<?> dynamicQueue=(DynamicCapacityBlockingQueue<?>) queue;
+            avgWaitTime=dynamicQueue.getAvgWaitTime();
+        }
         return ThreadPoolAccumulateMetricsDTO.builder()
                 .rejectCount(rejectCount)
+                .avgWaitTime(avgWaitTime)
                 .completedTaskCount(executor.getCompletedTaskCount())
                 .build();
     }

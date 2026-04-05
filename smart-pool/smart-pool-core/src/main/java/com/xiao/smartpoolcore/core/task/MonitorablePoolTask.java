@@ -1,6 +1,7 @@
 package com.xiao.smartpoolcore.core.task;
 
 import com.xiao.smartpoolcore.core.manager.TaskExecutionCallbackManager;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -8,9 +9,12 @@ import lombok.extern.slf4j.Slf4j;
  * 继承自PoolTask，集成执行时间和等待时间监控功能
  */
 @Slf4j
+@Getter
 public class MonitorablePoolTask extends PoolTask {
-    
-    private final long submitTimeNanos;
+
+    // 入队时间
+    public final long submitTimeNanos;
+
     
     public MonitorablePoolTask(Runnable realTask, String taskId, String taskType, String businessType, String payload,
                                String originalPoolName, long submitTimeNanos) {
@@ -26,6 +30,7 @@ public class MonitorablePoolTask extends PoolTask {
     @Override
     public void run() {
         long startExecuteNanos = System.nanoTime();
+        // 队列等待时间
         long waitTimeNanos = startExecuteNanos - submitTimeNanos;
         
         // 记录等待时间

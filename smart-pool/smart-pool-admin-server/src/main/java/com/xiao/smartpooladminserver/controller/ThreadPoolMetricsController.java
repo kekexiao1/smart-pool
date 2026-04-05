@@ -2,6 +2,7 @@ package com.xiao.smartpooladminserver.controller;
 
 import com.xiao.smartpooladminserver.common.result.Result;
 import com.xiao.smartpooladminserver.model.dto.ThreadPoolMetricsHistoryDTO;
+import com.xiao.smartpooladminserver.model.dto.RejectTrendDTO;
 import com.xiao.smartpooladminserver.service.ThreadPoolMetricsRedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,26 +53,9 @@ public class ThreadPoolMetricsController {
             return Result.failure("获取线程池 " + threadPoolName + " 最新指标失败: " + e.getMessage());
         }
     }
-    
+
     /**
-     * 获取指定线程池的历史指标
-     */
-    @GetMapping("/{threadPoolName}/history")
-    public Result<List<ThreadPoolMetricsHistoryDTO>> getMetricsHistory(
-            @PathVariable String threadPoolName,
-            @RequestParam(defaultValue = "50") int limit) {
-        try {
-            List<ThreadPoolMetricsHistoryDTO> history = metricsRedisService.getMetricsHistory(threadPoolName, limit);
-            log.debug("获取线程池 {} 历史指标，共 {} 条", threadPoolName, history.size());
-            return Result.success(history);
-        } catch (Exception e) {
-            log.error("获取线程池 {} 历史指标失败: {}", threadPoolName, e.getMessage(), e);
-            return Result.failure("获取线程池 " + threadPoolName + " 历史指标失败: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * 获取指定线程池的时间序列数据（用于图表展示）
+     * 获取指定线程池的时间序列数据
      */
     @GetMapping("/{threadPoolName}/timeseries")
     public Result<List<ThreadPoolMetricsHistoryDTO>> getTimeSeriesData(
@@ -91,22 +75,36 @@ public class ThreadPoolMetricsController {
     }
     
     /**
-     * 获取最近一小时的时间序列数据（简化接口）
+     * 获取最近一小时的时间序列数据
      */
     @GetMapping("/{threadPoolName}/timeseries/recent")
     public Result<List<ThreadPoolMetricsHistoryDTO>> getRecentTimeSeriesData(
             @PathVariable String threadPoolName) {
         try {
-            LocalDateTime endTime = LocalDateTime.now();
-            LocalDateTime startTime = endTime.minusHours(1);
-            
             List<ThreadPoolMetricsHistoryDTO> timeSeriesData = 
-                    metricsRedisService.getTimeSeriesData(threadPoolName, startTime, endTime);
-            log.debug("获取线程池 {} 最近一小时时间序列数据，共 {} 条", threadPoolName, timeSeriesData.size());
+                    metricsRedisService.getRecentTimeSeriesData(threadPoolName);
+            log.info("获取线程池 {} 最近一小时时间序列数据，共 {} 条", threadPoolName, timeSeriesData.size());
             return Result.success(timeSeriesData);
         } catch (Exception e) {
             log.error("获取线程池 {} 最近一小时时间序列数据失败: {}", threadPoolName, e.getMessage(), e);
             return Result.failure("获取线程池 " + threadPoolName + " 最近一小时时间序列数据失败: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 获取拒绝任务趋势数据
+     */
+    @GetMapping("/{threadPoolName}/reject-trend")
+    public Result<RejectTrendDTO> getRejectTrend(
+            @PathVariable String threadPoolName,
+            @RequestParam(defaultValue = "5") int minutesAgo) {
+        try {
+            RejectTrendDTO trend = metricsRedisService.getRejectTrend(threadPoolName, minutesAgo);
+            log.info("获取线程池 {} 拒绝任务趋势数据（较{}分钟前）", threadPoolName, minutesAgo);
+            return Result.success(trend);
+        } catch (Exception e) {
+            log.error("获取线程池 {} 拒绝任务趋势数据失败: {}", threadPoolName, e.getMessage(), e);
+            return Result.failure("获取线程池 " + threadPoolName + " 拒绝任务趋势数据失败: " + e.getMessage());
         }
     }
 }

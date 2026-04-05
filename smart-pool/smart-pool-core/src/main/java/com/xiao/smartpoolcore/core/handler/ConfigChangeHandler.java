@@ -305,7 +305,7 @@ public class ConfigChangeHandler {
         if (newHandler != null) {
             ThreadPoolExecutor executor = dynamicExecutor.getExecutor();
             executor.setRejectedExecutionHandler(newHandler);
-            dynamicExecutor.getCurrentRejectPolicy().set(rejectedClassName);
+//            dynamicExecutor.getCurrentRejectPolicy().set(rejectedClassName);
             log.info("[{}] 拒绝策略更新为：{}", dynamicExecutor.getThreadPoolName(), rejectedClassName);
         } else {
             throw new IllegalArgumentException("未知的拒绝策略: " + rejectedClassName);

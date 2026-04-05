@@ -16,14 +16,14 @@ function Header() {
       label: '配置管理',
     },
     {
+      key: '/monitor',
+      icon: <BarChartOutlined />,
+      label: '实时监控',
+    },
+    {
       key: '/log',
       icon: <FileTextOutlined />,
       label: '日志查询',
-    },
-    {
-      key: '/metrics',
-      icon: <SettingOutlined />,
-      label: '监控指标',
     },
   ]
 

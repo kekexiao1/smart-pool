@@ -29,7 +29,7 @@ public class TestAlert {
 		}
 	}
 
-	@GetMapping("/test/queue-full-alert")
+	@GetMapping("/queue-full-alert")
 	public Result<String> testQueueFullAlert(
 			@RequestParam(defaultValue = "order-pool") String poolName,
 			@RequestParam(defaultValue = "3") int durationSeconds) {
@@ -41,7 +41,7 @@ public class TestAlert {
 		}
 	}
 
-	@GetMapping("/test/run-timeout-alert")
+	@GetMapping("/run-timeout-alert")
 	public Result<String> testRunTimeoutAlert(
 			@RequestParam(defaultValue = "order-pool") String poolName,
 			@RequestParam(defaultValue = "15") int durationSeconds) {

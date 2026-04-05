@@ -32,4 +32,28 @@ export const logQueryAPI = {
   handleAlert: (id, handler) => api.put(`/log/alert/${id}/handle`, null, { params: { handler } }),
 }
 
+export const threadPoolMetricsAPI = {
+  // 获取所有线程池的最新指标
+  getAllLatestMetrics: () => api.get('/metrics/latest'),
+  
+  // 获取指定线程池的最新指标
+  getLatestMetrics: (threadPoolName) => api.get(`/metrics/${threadPoolName}/latest`),
+  
+  // 获取指定线程池的历史指标
+  getMetricsHistory: (threadPoolName, limit = 50) => api.get(`/metrics/${threadPoolName}/history`, { params: { limit } }),
+  
+  // 获取指定线程池的时间序列数据
+  getTimeSeriesData: (threadPoolName, startTime, endTime) => api.get(`/metrics/${threadPoolName}/timeseries`, { 
+    params: { startTime, endTime } 
+  }),
+  
+  // 获取最近一小时的时间序列数据
+  getRecentTimeSeriesData: (threadPoolName) => api.get(`/metrics/${threadPoolName}/timeseries/recent`),
+  
+  // 获取拒绝任务趋势数据
+  getRejectTrend: (threadPoolName, minutesAgo = 5) => api.get(`/metrics/${threadPoolName}/reject-trend`, { 
+    params: { minutesAgo } 
+  }),
+}
+
 export default api
