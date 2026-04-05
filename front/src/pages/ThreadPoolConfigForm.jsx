@@ -35,10 +35,13 @@ function ThreadPoolConfigForm() {
   const isEditMode = !!threadPoolName
 
   const rejectedHandlers = [
-    { label: 'CallerRunsPolicy', value: 'CallerRunsPolicy' },
-    { label: 'AbortPolicy', value: 'AbortPolicy' },
-    { label: 'DiscardPolicy', value: 'DiscardPolicy' },
-    { label: 'DiscardOldestPolicy', value: 'DiscardOldestPolicy' },
+    { label: 'CallerRuns - 调用者执行', value: 'CallerRuns', desc: '由调用线程执行任务' },
+    { label: 'Abort - 中止策略', value: 'Abort', desc: '抛出异常，拒绝任务' },
+    { label: 'Discard - 丢弃策略', value: 'Discard', desc: '静默丢弃任务' },
+    { label: 'DiscardOldest - 丢弃最老', value: 'DiscardOldest', desc: '丢弃队列中最老的任务' },
+    { label: 'Redis - Redis持久化', value: 'Redis', desc: '将拒绝的任务持久化到Redis' },
+    { label: 'Mq - 消息队列', value: 'Mq', desc: '将拒绝的任务发送到RocketMQ' },
+    { label: 'LocalDisk - 本地磁盘', value: 'LocalDisk', desc: '将拒绝的任务持久化到本地磁盘' },
   ]
 
   const timeUnits = [
@@ -76,7 +79,7 @@ function ThreadPoolConfigForm() {
           keepAliveTime: config.config?.keepAliveTime,
           unit: config.config?.unit || 'SECONDS',
           queueCapacity: config.config?.queueCapacity,
-          rejectedHandler: config.config?.rejectedHandlerClass || 'CallerRunsPolicy',
+          rejectedHandler: config.config?.rejectedHandlerClass || 'CallerRuns',
         })
       } else {
         message.error('获取配置详情失败')
@@ -226,7 +229,7 @@ function ThreadPoolConfigForm() {
           onFinish={handleSubmit}
           initialValues={{
           environment: 'default',
-          rejectedHandler: 'CallerRunsPolicy',
+          rejectedHandler: 'CallerRuns',
           unit: 'SECONDS',
         }}
         >
@@ -355,9 +358,17 @@ function ThreadPoolConfigForm() {
                 name="rejectedHandler"
                 rules={[{ required: true, message: '请选择拒绝策略' }]}
               >
-                <Select placeholder="选择拒绝策略">
+                <Select 
+                  placeholder="选择拒绝策略"
+                  optionRender={(option) => (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 500 }}>{option.data.label}</span>
+                      <span style={{ fontSize: 12, color: '#8c8c8c' }}>{option.data.desc}</span>
+                    </div>
+                  )}
+                >
                   {rejectedHandlers.map(handler => (
-                    <Option key={handler.value} value={handler.value}>
+                    <Option key={handler.value} value={handler.value} label={handler.label} desc={handler.desc}>
                       {handler.label}
                     </Option>
                   ))}

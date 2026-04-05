@@ -54,7 +54,14 @@ public class ThreadPoolMonitor implements MeterBinder, ApplicationRunner {
 	 * 注册所有指标
 	 */
 	private void registerAllMetrics() {
-		threadPoolRegistry.getAllExecutors().forEach((threadPoolName, executor) -> {
+		Map<String, DynamicThreadPoolExecutor> executors = threadPoolRegistry.getAllExecutors();
+		if (executors.isEmpty()) {
+			log.warn("注册指标时未发现任何线程池，请检查线程池初始化顺序");
+			return;
+		}
+		log.info("开始注册 {} 个线程池的监控指标", executors.size());
+		executors.forEach((threadPoolName, executor) -> {
+			log.info("注册线程池 [{}] 的监控指标", threadPoolName);
 			Tags tags = Tags.of("thread_pool_name", threadPoolName);
 			registerGaugeMetrics(executor, tags);
 			registerCounterMetrics(executor, tags);
@@ -81,52 +88,73 @@ public class ThreadPoolMonitor implements MeterBinder, ApplicationRunner {
 	/**
 	 * 注册 Gauge 指标（瞬时值）
 	 */
-	private void registerGaugeMetrics(DynamicThreadPoolExecutor executor, Tags tags) {
+	private void registerGaugeMetrics(DynamicThreadPoolExecutor dynamicExecutor, Tags tags) {
+		ThreadPoolExecutor executor = dynamicExecutor.getExecutor();
+
 		// 活跃线程数
-		Gauge.builder(ThreadPoolIndicatorEnum.ACTIVE_COUNT.getIndicatorName(), executor::getActiveCount)
+		Gauge.builder(ThreadPoolIndicatorEnum.ACTIVE_COUNT.getIndicatorName(), dynamicExecutor::getActiveCount)
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.ACTIVE_COUNT.getDesc())
 				.register(meterRegistry);
 
 		// 队列大小
-		Gauge.builder(ThreadPoolIndicatorEnum.QUEUE_SIZE.getIndicatorName(), executor::getQueueSize)
+		Gauge.builder(ThreadPoolIndicatorEnum.QUEUE_SIZE.getIndicatorName(), dynamicExecutor::getQueueSize)
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.QUEUE_SIZE.getDesc())
 				.register(meterRegistry);
 
 		// 队列容量（配置值）
 		Gauge.builder(ThreadPoolIndicatorEnum.QUEUE_CAPACITY.getIndicatorName(),
-					() -> executor.getConfig().getQueueCapacity())
+					() -> dynamicExecutor.getConfig().getQueueCapacity())
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.QUEUE_CAPACITY.getDesc())
 				.register(meterRegistry);
 
 		// 核心线程数（配置值）
 		Gauge.builder(ThreadPoolIndicatorEnum.CORE_POOL_SIZE.getIndicatorName(),
-					() -> executor.getConfig().getCorePoolSize())
+					() -> dynamicExecutor.getConfig().getCorePoolSize())
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.CORE_POOL_SIZE.getDesc())
 				.register(meterRegistry);
 
 		// 最大线程数
 		Gauge.builder(ThreadPoolIndicatorEnum.MAX_POOL_SIZE.getIndicatorName(),
-					() -> executor.getConfig().getMaximumPoolSize())
+					() -> dynamicExecutor.getConfig().getMaximumPoolSize())
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.MAX_POOL_SIZE.getDesc())
 				.register(meterRegistry);
 
 		// 当前线程数
 		Gauge.builder(ThreadPoolIndicatorEnum.CURRENT_POOL_SIZE.getIndicatorName(),
-					() -> executor.getExecutor().getPoolSize())
+					() -> dynamicExecutor.getExecutor().getPoolSize())
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.CURRENT_POOL_SIZE.getDesc())
 				.register(meterRegistry);
 
 		// 队列剩余容量
 		Gauge.builder(ThreadPoolIndicatorEnum.QUEUE_REMAINING_CAPACITY.getIndicatorName(),
-					() -> executor.getExecutor().getQueue().remainingCapacity())
+					() -> dynamicExecutor.getExecutor().getQueue().remainingCapacity())
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.QUEUE_REMAINING_CAPACITY.getDesc())
+				.register(meterRegistry);
+
+		// 拒绝任务总数 - 动态获取当前handler，避免handler替换后引用失效
+		RejectedExecutionHandler currentHandler = executor.getRejectedExecutionHandler();
+		log.info("线程池 [{}] 拒绝策略处理器类型: {}", dynamicExecutor.getThreadPoolName(), 
+				currentHandler.getClass().getName());
+		
+		Gauge.builder(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getIndicatorName(),
+						executor, exec -> {
+							RejectedExecutionHandler h = exec.getRejectedExecutionHandler();
+							if (h instanceof CountingRejectedExecutionHandler) {
+								return ((CountingRejectedExecutionHandler) h).getRejectedCount();
+							}
+							log.warn("线程池拒绝策略不是 CountingRejectedExecutionHandler 类型: {}", 
+									h.getClass().getName());
+							return 0.0;
+						})
+				.tags(tags)
+				.description(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getDesc())
 				.register(meterRegistry);
 	}
 
@@ -143,17 +171,6 @@ public class ThreadPoolMonitor implements MeterBinder, ApplicationRunner {
 				.tags(tags)
 				.description(ThreadPoolIndicatorEnum.TASK_COUNT.getDesc())
 				.register(meterRegistry);
-
-		// 拒绝任务总数
-		RejectedExecutionHandler handler = executor.getRejectedExecutionHandler();
-		if(handler instanceof CountingRejectedExecutionHandler){
-			CountingRejectedExecutionHandler handler1=(CountingRejectedExecutionHandler) handler;
-			FunctionCounter.builder(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getIndicatorName(),
-							handler1, CountingRejectedExecutionHandler::getRejectedCount)
-					.tags(tags)
-					.description(ThreadPoolIndicatorEnum.REJECT_COUNT_TOTAL.getDesc())
-					.register(meterRegistry);
-		}
 
 		// 完成任务总数
 		FunctionCounter.builder(ThreadPoolIndicatorEnum.COMPLETED_TASK_TOTAL.getIndicatorName(),

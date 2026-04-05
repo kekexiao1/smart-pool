@@ -1,6 +1,6 @@
 import React from 'react'
-import { Layout, Menu, Button, Space } from 'antd'
-import { PlusOutlined, SettingOutlined, DashboardOutlined, BarChartOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Layout, Menu } from 'antd'
+import { DashboardOutlined, BarChartOutlined, FileTextOutlined } from '@ant-design/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const { Header: AntHeader } = Layout
@@ -44,16 +44,6 @@ function Header() {
             overflowedIndicator={null}
           />
         </div>
-        
-        <Space>
-          <Button 
-            type="primary" 
-            icon={<BarChartOutlined />}
-            onClick={() => window.open('http://localhost:3000/goto/tr57brcvR?orgId=1', '_blank')}
-          >
-            Grafana监控
-          </Button>
-        </Space>
       </div>
     </AntHeader>
   )

@@ -5,6 +5,7 @@ import com.xiao.smartpoolcore.common.constant.PoolLogConstant;
 import com.xiao.smartpoolcore.common.constant.ThreadPoolConstant;
 import com.xiao.smartpoolcore.common.util.ParseUtil;
 import com.xiao.smartpoolcore.common.util.ValidateUtil;
+import com.xiao.smartpoolcore.config.CountingRejectedExecutionHandler;
 import com.xiao.smartpoolcore.config.DynamicCapacityBlockingQueue;
 import com.xiao.smartpoolcore.core.executor.DynamicThreadPoolExecutor;
 import com.xiao.smartpoolcore.core.registry.ThreadPoolRegistry;
@@ -301,11 +302,18 @@ public class ConfigChangeHandler {
      * 更新拒绝策略
      */
     private void updateRejectedHandler(DynamicThreadPoolExecutor dynamicExecutor, String rejectedClassName) {
+        ThreadPoolExecutor executor = dynamicExecutor.getExecutor();
+        RejectedExecutionHandler oldHandler = executor.getRejectedExecutionHandler();
+        
         RejectedExecutionHandler newHandler = ParseUtil.parseRejectedHandler(rejectedClassName);
         if (newHandler != null) {
-            ThreadPoolExecutor executor = dynamicExecutor.getExecutor();
+            if (oldHandler instanceof CountingRejectedExecutionHandler && 
+                newHandler instanceof CountingRejectedExecutionHandler) {
+                CountingRejectedExecutionHandler oldCounting = (CountingRejectedExecutionHandler) oldHandler;
+                CountingRejectedExecutionHandler newCounting = (CountingRejectedExecutionHandler) newHandler;
+                newCounting.setRejectedCount(oldCounting.getRejectedCount());
+            }
             executor.setRejectedExecutionHandler(newHandler);
-//            dynamicExecutor.getCurrentRejectPolicy().set(rejectedClassName);
             log.info("[{}] 拒绝策略更新为：{}", dynamicExecutor.getThreadPoolName(), rejectedClassName);
         } else {
             throw new IllegalArgumentException("未知的拒绝策略: " + rejectedClassName);

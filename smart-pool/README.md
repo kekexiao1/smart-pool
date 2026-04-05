@@ -158,6 +158,81 @@ public void execute() {
 | completedTaskCount | 已完成任务数 |
 | rejectCount | 拒绝任务数 |
 
+## Grafana 监控面板
+
+项目提供了开箱即用的 Grafana 监控面板配置文件 `grafana-dashboard.json`，支持以下监控图表：
+
+| 图表 | 说明 |
+|------|------|
+| 任务完成平均耗时 | 展示线程池任务执行的平均耗时趋势 |
+| 线程池完成任务总数 | 展示已完成任务的累计数量 |
+| 任务等待平均时长 | 展示任务在队列中的平均等待时间 |
+| 队列占比 | 展示队列使用率（队列大小/队列容量） |
+| 活跃线程占比 | 展示活跃线程占比（活跃线程数/最大线程数） |
+| 拒绝任务变化值 | 展示被拒绝任务的数量变化趋势 |
+
+### 前置条件
+
+1. 已安装 Prometheus 并配置抓取应用指标端点（`/actuator/prometheus`）
+2. 已安装 Grafana 并配置 Prometheus 数据源
+
+### 导入步骤
+
+#### 方式一：通过 Grafana UI 导入
+
+1. 登录 Grafana 控制台
+2. 点击左侧菜单 **Dashboards** → **New** → **Import**
+3. 有两种导入方式：
+   - **上传文件**：点击 **Upload dashboard JSON file**，选择 `grafana-dashboard.json` 文件
+   - **粘贴内容**：将 `grafana-dashboard.json` 文件内容复制粘贴到 Import via panel json 文本框
+4. 选择 Prometheus 数据源
+5. 点击 **Import** 完成导入
+
+#### 方式二：通过 API 导入
+
+```bash
+# 假设 Grafana 运行在 localhost:3000，用户名 admin，密码 admin
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -u admin:admin \
+  -d @grafana-dashboard.json \
+  http://localhost:3000/api/dashboards/db
+```
+
+### Prometheus 配置示例
+
+在 `prometheus.yml` 中添加应用抓取配置：
+
+```yaml
+scrape_configs:
+  - job_name: 'smart-pool'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8081']
+```
+
+### 常用 PromQL 查询
+
+```promql
+# 活跃线程数
+thread_pool_active_count
+
+# 队列使用率
+thread_pool_queue_size / thread_pool_queue_capacity * 100
+
+# 活跃线程占比
+thread_pool_active_count / thread_pool_max_pool_size * 100
+
+# 拒绝任务数
+thread_pool_reject_count
+
+# 任务平均执行时间（秒）
+rate(thread_pool_execute_time_seconds_sum[$__range]) / rate(thread_pool_execute_time_seconds_count[$__range])
+
+# 任务平均等待时间（秒）
+rate(thread_pool_wait_time_seconds_sum[$__range]) / rate(thread_pool_wait_time_seconds_count[$__range])
+```
+
 ## 告警配置
 
 ```yaml
