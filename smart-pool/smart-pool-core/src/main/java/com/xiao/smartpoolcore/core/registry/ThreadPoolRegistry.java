@@ -19,7 +19,6 @@ public class ThreadPoolRegistry {
 	private final Map<String, ThreadPoolConfig> configMap = new ConcurrentHashMap<>();
 
 	public ThreadPoolRegistry() {
-		log.info("线程池注册中心初始化完成");
 	}
 
 	/**

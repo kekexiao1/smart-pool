@@ -9,6 +9,8 @@ smart-pool:
 spring:
   application:
     name: smart-pool-admin-server
+  profiles:
+    active: dev
   output:
     ansi:
       enabled: always

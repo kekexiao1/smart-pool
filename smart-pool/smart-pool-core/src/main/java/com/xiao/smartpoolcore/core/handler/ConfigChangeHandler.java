@@ -40,7 +40,6 @@ public class ConfigChangeHandler {
      * @param configInfo 配置信息
      */
     public void handleConfigInit(String configInfo) {
-        log.info("开始处理配置初始化");
         // 解析配置
         DynamicThreadPoolProperties properties = ParseUtil.parseConfig(configInfo);
         Map<String, ThreadPoolConfig> configs = properties.getExecutors();

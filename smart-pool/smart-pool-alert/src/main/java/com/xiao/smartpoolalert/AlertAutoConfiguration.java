@@ -28,12 +28,6 @@ import org.springframework.context.annotation.Bean;
 @AutoConfigureAfter({CoreAutoConfiguration.class, MetricsAutoConfiguration.class})
 public class AlertAutoConfiguration {
 
-//    @Bean
-//    public ApplicationContextHolder applicationContextHolder() {
-//        log.info("ApplicationContextHolder 配置完成");
-//        return new ApplicationContextHolder();
-//    }
-
     @Bean
     @ConditionalOnMissingBean(PoolAlertLogService.class)
     public AlertManager alertManager() {

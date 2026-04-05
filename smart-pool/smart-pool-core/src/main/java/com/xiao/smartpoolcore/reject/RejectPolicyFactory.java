@@ -1,14 +1,12 @@
 package com.xiao.smartpoolcore.reject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xiao.smartpoolcore.common.constant.PolicyType;
 import com.xiao.smartpoolcore.common.util.ApplicationContextHolder;
 import com.xiao.smartpoolcore.reject.local.LocalDiskRejectPolicy;
 import com.xiao.smartpoolcore.reject.mq.MQRejectPolicy;
-import com.xiao.smartpoolcore.reject.redis.RedisRejectPolicy;
+import com.xiao.smartpoolcore.reject.redis.LazyRedisRejectPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -49,14 +47,8 @@ public class RejectPolicyFactory {
     }
 
     private static RejectedExecutionHandler createRedisPolicy() {
-        RedisTemplate<String, Object> redisTemplate = ApplicationContextHolder.getBean(RedisTemplate.class);
-        
-        if (redisTemplate == null) {
-            log.warn("RedisTemplate 未提供，降级为 LocalDiskRejectPolicy");
-            return new LocalDiskRejectPolicy();
-        }
-
-        return new RedisRejectPolicy(redisTemplate);
+        log.info("创建 Redis 拒绝策略（延迟加载模式）");
+        return new LazyRedisRejectPolicy();
     }
 
     private static RejectedExecutionHandler createMQPolicy() {

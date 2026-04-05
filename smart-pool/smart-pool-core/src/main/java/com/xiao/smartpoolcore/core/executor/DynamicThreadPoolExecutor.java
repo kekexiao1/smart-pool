@@ -31,7 +31,6 @@ public class DynamicThreadPoolExecutor{
 
 		RejectedExecutionHandler rejectedExecutionHandler = ParseUtil.parseRejectedHandler(config.getRejectedHandlerClass());
 
-
 		// 创建执行器
 		this.executor = new ThreadPoolExecutor(
 				config.getCorePoolSize(),
@@ -42,9 +41,6 @@ public class DynamicThreadPoolExecutor{
 				new NamedThreadFactory(config.getThreadPoolName()),
 				rejectedExecutionHandler
 		);
-
-		log.info("线程池 [{}] 创建成功，核心线程数: {}, 最大线程数: {}",
-				config.getThreadPoolName(), config.getCorePoolSize(), config.getMaximumPoolSize());
 	}
 
 	/**

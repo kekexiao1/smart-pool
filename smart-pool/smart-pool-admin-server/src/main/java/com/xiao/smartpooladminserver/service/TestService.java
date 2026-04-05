@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,13 +22,13 @@ public class TestService {
 			throw new IllegalArgumentException("线程池[" + poolName + "]不存在");
 		}
 
-
+		Random random = new Random();
+		int sleepTime = random.nextInt(20)+10;
 		for (int i = 0; i < taskCount; i++) {
 			int taskId=i+1;
 			Runnable task=() -> {
 				try {
-					Thread.sleep(1000);
-					log.info("线程 [{}] 成功第{}次执行任务", poolName, taskId);
+					Thread.sleep(sleepTime);
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}

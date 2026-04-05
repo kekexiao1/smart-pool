@@ -18,10 +18,9 @@ public class TestAlert {
 	private final TestService testService;
 
 	@GetMapping("/test")
-	public Result runTask() {
-		log.info("开始测试");
+	public Result runTask(@RequestParam String poolName) {
 		try {
-			testService.executeTestTask("order-service-pool", 30);
+			testService.executeTestTask(poolName, 1);
 			return Result.success();
 		} catch (IllegalArgumentException e) {
 			log.error(e.getMessage());

@@ -5,10 +5,8 @@ import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.xiao.smartpoolcore.callback.PoolLogService;
-import com.xiao.smartpoolcore.common.constant.PoolLogConstant;
 import com.xiao.smartpoolcore.common.constant.ThreadPoolConstant;
 import com.xiao.smartpoolcore.core.handler.ConfigChangeHandler;
-import com.xiao.smartpoolcore.model.dto.PoolConfigLogDTO;
 import com.xiao.smartpoolcore.model.event.ConfigChangeEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,17 +24,14 @@ import java.util.concurrent.*;
 
 @RequiredArgsConstructor
 @ConditionalOnClass(name = "com.alibaba.nacos.api.config.ConfigService")
+@Slf4j
 public class NacosConfigListener implements ConfigSourceListener, InitializingBean, DisposableBean, ApplicationListener<RefreshEvent> {
-
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NacosConfigListener.class);
 
 	private final ConfigChangeHandler configChangeHandler;
 
 	private ConfigService configService;
 
 	private final NacosConfigManager configManager;
-
-	private final PoolLogService poolLogService;
 
 	private final Map<String, Listener> listenerMap=new ConcurrentHashMap<>();
 
@@ -95,7 +88,6 @@ public class NacosConfigListener implements ConfigSourceListener, InitializingBe
 		try{
 			String config = configService.getConfig(dataId, group, 3000);
 			if(StringUtils.hasText(config)){
-				log.info("获取到初始配置: config={}", config);
 				listener.receiveConfigInfo(config);
 			}
 		}catch (Exception e){

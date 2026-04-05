@@ -17,14 +17,12 @@ public class MetricsAutoConfiguration {
 
 	@Bean
 	public ThreadPoolMetricCollector threadPoolMetricCollector(ThreadPoolRegistry registry){
-		log.info("ThreadPoolMetricCollector 配置完成");
 		return new ThreadPoolMetricCollector(registry);
 	}
 
 	@Bean
 	public ThreadPoolMonitor threadPoolMonitor(ThreadPoolRegistry threadPoolRegistry,
 									   MeterRegistry meterRegistry){
-		log.info("ThreadPoolMonitor 配置完成");
 		return new ThreadPoolMonitor(threadPoolRegistry, meterRegistry);
 	}
 

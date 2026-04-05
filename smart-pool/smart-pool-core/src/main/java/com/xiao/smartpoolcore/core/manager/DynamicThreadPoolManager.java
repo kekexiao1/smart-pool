@@ -27,7 +27,6 @@ public class DynamicThreadPoolManager implements DisposableBean {
 	@PostConstruct
 	public void initConfig() {
 		log.info("开始初始化动态线程池...");
-		
 		try {
 			// 获取初始配置
 			String configInfo = nacosConfigListener.getConfig();
@@ -41,8 +40,6 @@ public class DynamicThreadPoolManager implements DisposableBean {
 			
 			// 启动配置监听
 			nacosConfigListener.startListening();
-			
-			log.info("动态线程池初始化完成");
 			
 		} catch (Exception e) {
 			log.error("动态线程池初始化失败", e);

@@ -40,4 +40,8 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 	public static <T> T getBeanOrNull(Class<T> clazz) {
 		return getBean(clazz);
 	}
+
+	public static ApplicationContext getApplicationContext() {
+		return applicationContext;
+	}
 }
