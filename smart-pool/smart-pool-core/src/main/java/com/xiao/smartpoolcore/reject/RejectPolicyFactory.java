@@ -53,12 +53,11 @@ public class RejectPolicyFactory {
 
     private static RejectedExecutionHandler createMQPolicy() {
         RocketMQTemplate rocketMQTemplate = ApplicationContextHolder.getBean(RocketMQTemplate.class);
-
+        log.warn("注册RocketMq拒绝策略");
         if (rocketMQTemplate == null) {
             log.warn("RocketMQTemplate 未提供，降级为 LocalDiskRejectPolicy");
             return new LocalDiskRejectPolicy();
         }
-
         return new MQRejectPolicy(rocketMQTemplate);
     }
 

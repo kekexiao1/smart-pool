@@ -97,16 +97,6 @@ public class DynamicThreadPoolExecutor{
 		return this.config.getThreadPoolName();
 	}
 
-
-//	/**
-//	 * 返回当前拒绝策略
-//	 * @return
-//	 */
-//	public AtomicReference getCurrentRejectPolicy(){
-//		return this.currentRejectPolicy;
-//	}
-
-
 	public boolean isShutDown() {
 		return executor.isShutdown();
 	}

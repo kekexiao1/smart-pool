@@ -3,7 +3,7 @@ package com.xiao.smartpooladminserver.controller;
 import com.xiao.smartpooladminserver.common.result.Result;
 import com.xiao.smartpooladminserver.model.dto.ThreadPoolMetricsHistoryDTO;
 import com.xiao.smartpooladminserver.model.dto.RejectTrendDTO;
-import com.xiao.smartpooladminserver.service.ThreadPoolMetricsRedisService;
+import com.xiao.smartpooladminserver.service.impl.ThreadPoolMetricsRedisServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ThreadPoolMetricsController {
 
-    private final ThreadPoolMetricsRedisService metricsRedisService;
+    private final ThreadPoolMetricsRedisServiceImpl metricsRedisService;
     
     /**
      * 获取所有线程池的最新指标

@@ -15,8 +15,11 @@ import java.time.LocalDateTime;
 public class ThreadPoolMetricsHistoryDTO {
     
     private String threadPoolName;
+
     private ThreadPoolRealTimeMetricsDTO realTimeMetrics;
+
     private ThreadPoolAccumulateMetricsDTO accumulateMetrics;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 }

@@ -43,7 +43,7 @@
         <redis.version>3.2.2</redis.version>
         <lettuce.version>6.2.4.RELEASE</lettuce.version>
         <fastjson.version>1.2.83</fastjson.version>
-        <rocketmq.version>2.3.4</rocketmq.version>
+        <rocketmq.version>2.3.5</rocketmq.version>
     </properties>
 
 
@@ -87,7 +87,7 @@
                 <artifactId>nacos-client</artifactId>
                 <version>${nacos-client.version}</version>
             </dependency>
-
+            <!-- redis -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>

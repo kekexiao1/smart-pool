@@ -22,4 +22,37 @@ public interface LogQueryService {
      * 标记告警为已处理
      */
     void handleAlert(Long id, String handler);
+    
+//    /**
+//     * 获取未处理的告警数量
+//     * @return 未处理告警数量
+//     */
+//    long getUnhandledAlertCount();
+//
+//    /**
+//     * 获取告警统计信息
+//     * @return 告警统计
+//     */
+//    Map<String, Object> getAlertStatistics();
+//
+//    /**
+//     * 清理过期日志
+//     * @param daysBefore 保留天数
+//     * @return 清理结果
+//     */
+//    Map<String, Object> cleanupExpiredLogs(int daysBefore);
+//
+//    /**
+//     * 导出配置变更日志
+//     * @param queryDTO 查询条件
+//     * @return 日志数据
+//     */
+//    List<PoolConfigLog> exportConfigLogs(PoolConfigLogQueryDTO queryDTO);
+//
+//    /**
+//     * 导出告警日志
+//     * @param queryDTO 查询条件
+//     * @return 日志数据
+//     */
+//    List<PoolAlertLog> exportAlertLogs(PoolAlertLogQueryDTO queryDTO);
 }

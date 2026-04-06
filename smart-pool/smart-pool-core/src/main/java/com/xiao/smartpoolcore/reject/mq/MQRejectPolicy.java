@@ -35,8 +35,6 @@ public class MQRejectPolicy extends AbstractRejectPolicy {
         boolean mqSuccess = tryMQPersist(task, executor);
         
         if (!mqSuccess) {
-            // MQ失败，尝试Redis持久化
-//            boolean redisSuccess = tryRedisFallback(task, executor);
             boolean redisSuccess=false;
             if (!redisSuccess) {
                 // Redis失败，尝试本地磁盘持久化
@@ -118,83 +116,16 @@ public class MQRejectPolicy extends AbstractRejectPolicy {
     private String buildMessageContent(Runnable task, String threadPoolName) {
         Map<String, Object> content = new HashMap<>();
         
-        // 基础拒绝信息
-        content.put("rejectTime", System.currentTimeMillis());
-        content.put("rejectReason", "THREAD_POOL_FULL");
         content.put("originalPoolName", threadPoolName);
-        
-        // 系统信息
-        content.put("host", getHostName());
-        content.put("application", getApplicationName());
-        content.put("environment", getEnvironment());
-        
-        // 如果是PoolTask，包含详细信息
         if (task instanceof PoolTask) {
             PoolTask poolTask = (PoolTask) task;
-            
-            // 必填字段
             content.put("taskId", poolTask.getTaskId());
-            content.put("taskType", poolTask.getTaskType());
             content.put("businessType", poolTask.getBusinessType());
             content.put("payload", poolTask.getPayload());
             content.put("createTime", poolTask.getCreateTime());
-            content.put("retryCount", poolTask.getRetryCount().get());
-            
-            // 可选字段
-            if (poolTask.getMaxRetries() > 0) {
-                content.put("maxRetries", poolTask.getMaxRetries());
-            }
-            if (poolTask.getOriginalPoolName() != null) {
-                content.put("originalPoolName", poolTask.getOriginalPoolName());
-            }
-            if (poolTask.getPriority() != 5) {
-                content.put("priority", poolTask.getPriority());
-            }
-            if (poolTask.getTraceId() != null) {
-                content.put("traceId", poolTask.getTraceId());
-            }
-            if (poolTask.getTtl() != null) {
-                content.put("ttl", poolTask.getTtl());
-            }
-            if (poolTask.getExceptionStack() != null) {
-                content.put("exceptionStack", poolTask.getExceptionStack());
-            }
         }
         
         return JSON.toJSONString(content);
-    }
-    
-    /**
-     * 获取主机名
-     */
-    private String getHostName() {
-        try {
-            return java.net.InetAddress.getLocalHost().getHostName();
-        } catch (Exception e) {
-            return "unknown";
-        }
-    }
-    
-    /**
-     * 获取应用名
-     */
-    private String getApplicationName() {
-        try {
-            return System.getProperty("spring.application.name", "smart-pool-admin-server");
-        } catch (Exception e) {
-            return "unknown";
-        }
-    }
-    
-    /**
-     * 获取环境信息
-     */
-    private String getEnvironment() {
-        try {
-            return System.getProperty("spring.profiles.active", "dev");
-        } catch (Exception e) {
-            return "dev";
-        }
     }
 
     /**
@@ -205,6 +136,7 @@ public class MQRejectPolicy extends AbstractRejectPolicy {
         
         try {
             // 这里需要RedisTemplate，暂时记录日志
+        
             log.warn("MQ失败，尝试Redis兜底（需要配置RedisTemplate），线程池: {}", threadPoolName);
             return false;
         } catch (Exception e) {
