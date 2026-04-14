@@ -84,7 +84,6 @@ public class MQRejectPolicy extends AbstractRejectPolicy {
                 }
             }
         }
-        
         return false;
     }
 

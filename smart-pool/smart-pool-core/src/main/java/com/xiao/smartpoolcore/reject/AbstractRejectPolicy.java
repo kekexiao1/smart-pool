@@ -5,8 +5,6 @@ import com.xiao.smartpoolcore.core.task.PoolTask;
 import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * 抽象兜底拒绝策略：定义通用能力
  */

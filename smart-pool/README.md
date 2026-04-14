@@ -326,7 +326,3 @@ thread-pool:
 | /api/thread-pool/metrics | GET | 获取实时指标 |
 | /api/thread-pool/history | GET | 获取历史指标 |
 | /api/log/query | GET | 查询日志 |
-
-## 许可证
-
-MIT License

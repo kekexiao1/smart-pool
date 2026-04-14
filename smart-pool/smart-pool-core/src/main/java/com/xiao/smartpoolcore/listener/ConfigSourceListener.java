@@ -1,4 +1,4 @@
-package com.xiao.smartpoolcore.listener.nacos;
+package com.xiao.smartpoolcore.listener;
 
 public interface ConfigSourceListener {
 	/**

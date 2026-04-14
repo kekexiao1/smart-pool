@@ -33,7 +33,6 @@ public class ThreadPoolMonitor implements MeterBinder, ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		log.info("ThreadPoolMonitor 启动");
 		// 等待一段时间确保线程池初始化完成
         try {
             Thread.sleep(1000);

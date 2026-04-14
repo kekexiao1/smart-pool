@@ -6,10 +6,13 @@ import com.xiao.smartpoolmetrics.metrics.ThreadPoolMetricCollector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 
 @RequiredArgsConstructor
 @Slf4j
@@ -24,12 +27,21 @@ public class ThreadPoolMonitorScheduler {
 	// 基础检查间隔（毫秒），用于轮询检查
 	private static final int BASE_CHECK_INTERVAL = 1000;
 
+	private final ScheduledExecutorService executors=Executors.newScheduledThreadPool(4);
+
 
 	@Scheduled(fixedDelay = BASE_CHECK_INTERVAL)
 	public void collectAndAlert(){
+
 		// 获取所有配置的线程池
 		Map<String, ThreadPoolAlertConfig.PoolAlertConfig> pools = threadPoolAlertConfig.getPools();
-		
+
+//		pools.forEach((poolName, poolConfig) -> {
+//			Runnable r=() -> {alertEngine.checkSingleThreadPool(poolName);};
+//			executors.scheduleAtFixedRate(r, 1, 60, TimeUnit.SECONDS);
+//		});
+
+
 		// 检查每个线程池是否需要执行监控
 		pools.forEach((poolName, poolConfig) -> {
 			long currentTime = System.currentTimeMillis();

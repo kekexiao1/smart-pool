@@ -1,5 +1,6 @@
 package com.xiao.smartpoolcore.model.dto;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -8,6 +9,7 @@ import java.util.Objects;
 public class ConfigChanges {
 	private final ThreadPoolConfig oldConfig;
 	private final ThreadPoolConfig newConfig;
+
 
 	public ConfigChanges(ThreadPoolConfig oldConfig,
 						 ThreadPoolConfig newConfig) {
